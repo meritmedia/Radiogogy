@@ -1,0 +1,179 @@
+﻿<h1>Event Registration</h1>
+<div class="row">
+    <div class="col-md-6">
+        <div><input name="eventName" placeholder="event name - required" required /></div>
+
+        <div>
+            <div>Start Date and Time:</div>
+            <span>
+                <input type="date" name="eventDate" placeholder="date" style="width:49%;" required />
+                <input type="time" name="startTime" placeholder="time" style="width:49%;" required />
+            </span>
+        </div>
+        <div>
+            <div>End Date and Time:</div>
+            <span>
+                <input type="date" name="endDate" placeholder="date" style="width:49%;" />
+                <input type="time" name="endTime" placeholder="time" style="width:49%;" required />
+            </span>
+        </div>
+        <div>
+            <span><input name="eventAddress" placeholder="street" /></span>
+            <span>
+                <input name="eventCity" placeholder="city - required" style="width:75%;" />,
+
+                <span id="eventStateSel" style="width:15%;"></span>
+            </span>
+        </div>
+    </div>
+     <div class="col-md-6">
+         <div><input name="sponsor" placeholder="event sponsor - required" required /></div>
+         <div><input name="eventContactName" placeholder="person to contact - required" required /></div>
+         <div><input name="eventEmail" type="email" placeholder="contact email - required" required /></div>
+         <div><input name="eventPhone" type="tel" placeholder="contact phone" /></div>
+         <div><input name="eventWeb" type="url" placeholder="website" /></div>
+         <div><input name="fbEventID" placeholder="Facebook event page ID" /></div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-6">
+        
+        <textarea name="eventDescription" rows="4" placeholder="event description - required" required></textarea>
+        
+
+
+
+    </div>
+    <div class="col-md-6">
+        
+        <textarea name="addlinfo" rows="4" placeholder="additional information" ></textarea>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <input type="button" value="Include in searches? NO" id="eventSearchableBtn" />
+        <input type="hidden" value="0" id="eventSearchable" name="eventSearchable"/>
+    </div>
+</div>
+
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <hr />
+        <div id="eventFormRegErrMsg"></div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-6">
+        <input type="submit" id="eventFormRegSubBtn" name="eventFormRegSubBtn" class="subBtns" value="This is correct" />
+    </div>
+    <div class="col-md-6">
+        <input type="button" name="eventFormRegSubBtnCancel" class="subBtns cancelSub" value="Cancel/Done" />
+    </div>
+
+</div>
+<input type="hidden" name="eventID" />
+<script>
+
+    isSearchable("#eventSearchable",0);
+
+    $("#eventSearchableBtn").click(function () {
+        isSearchable("#eventSearchable",1);
+    })
+
+    $("input[name=eventFormRegSubBtn]").click(function () {
+        var goodToGo = 0;
+        goodToGo += requiredVal("eventName");
+        goodToGo += requiredVal("eventContactName");
+        goodToGo += requiredVal("eventDescription");
+        goodToGo += requiredVal("eventCity");
+        goodToGo += requiredVal("eventState");
+        goodToGo += requiredVal("eventEmail");
+        goodToGo += requiredVal("eventDate");
+        goodToGo += requiredVal("startTime");
+        goodToGo += requiredVal("endTime");
+        goodToGo += checkemail("eventEmail");
+
+        var eventID          = $("input[name=eventID]").val();
+        var eventName        = $("input[name=eventName]").val();
+        var eventDate        = $("input[name=eventDate]").val();
+        var startTime        = $("input[name=startTime]").val();
+        var endDate          = $("input[name=eventDate]").val();
+        if (endDate === "") {
+            endDate = eventDate;
+        }
+        var endTime          = $("input[name=endTime]").val();
+
+        var eventAddress     = $("input[name=eventAddress]").val();
+        var eventCity        = $("input[name=eventCity]").val();
+        var eventState       = $('select[name=eventState] option:selected').val();
+        var sponsor          = $("input[name=sponsor]").val();
+        var eventContactName = $("input[name=eventContactName]").val();
+        var eventEmail       = $("input[name=eventEmail]").val();
+        var eventPhone       = $("input[name=eventPhone]").val();
+        var eventWeb         = $("input[name=eventWeb]").val();
+        var fbEventID        = $("input[name=fbEventID]").val();
+        var eventDescription = $("textarea[name=eventDescription]").val();
+        var addlinfo         = $("textarea[name=addlinfo]").val();
+        var eventSearchable  = $("#eventSearchable").val();
+
+        $("#eventFormRegErrMsg").html("");
+        if (goodToGo > 0) {
+            errmsg = "The fields in <span style='background-color:" + errColor + "; padding: 0 2pt; '>red</span> are required.";
+            $("#eventFormRegErrMsg").html("Alert! " + errmsg);
+        }
+        else {
+            console.log("eventSearchable: " + eventSearchable);
+
+            $.post(DCURL + "RegisterEvent", {
+
+                fbID: fbObj.id,
+                eventName: eventName,
+                eventDate: eventDate,
+                startTime: startTime,
+                endDate: endDate,
+                endTime: endTime,
+                eventAddress: eventAddress,
+                eventCity: eventCity,
+                eventState: eventState,
+                sponsor: sponsor,
+                eventContactName: eventContactName,
+                eventEmail: eventEmail,
+                eventPhone: eventPhone,
+                eventWeb: eventWeb,
+                fbEventID: fbEventID,
+                eventDescription: eventDescription,
+                addlinfo: addlinfo,
+                eventSearchable: eventSearchable,
+                miID: eventID
+
+            })
+                .done(function (data) {
+                    $.post(DCURL + "SubmissionsListRefresh", {
+                        fbID: fbObj.id
+                    }).done(function (data) {
+                        $("#eventFormRegErrMsg").html("Record for " + eventName + " saved.");
+                        window.previousSubmissions++;
+                        previousSubmissionsAddBtn(window.previousSubmissions);
+                        submissionsObj = JSON.parse(data);
+                        submissionsList(submissionsObj);
+                    })
+                })
+
+
+        };
+    });
+
+
+    loadDecode("stateShort", "#eventStateSel", "eventState", "State","");
+
+</script>

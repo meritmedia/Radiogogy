@@ -1,0 +1,104 @@
+﻿<h1>Event Search</h1>
+<div id="searchEventMenu">
+    <div class="row">
+        <div class="col-md-6">
+            <span id="SearchEventsWithinState" class="SearchBtn">Search My State</span>
+            </div>
+            <div class="col-md-6">
+                <span id="SearchEventsAllStates" class="SearchBtn">Search All States</span>
+            </div>
+    </div>
+</div>
+
+<div id="searchEventData"></div>
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <input type="button" name="eventFormSearchSubBtnCancel" class="subBtns cancelSub" value="Cancel" />
+    </div>
+
+</div>
+
+<script>
+    var stateDecode = "";
+    $("#SearchEventsWithinState").click(function () {
+        runEventSearch(fbObj.id, "");
+    })
+
+    $("#SearchEventsAllStates").click(function () {
+        runEventSearch("", "");
+    })
+
+    function runEventSearch() {
+        $.post(DCURL + "SearchEvent", {
+            fbID: fbObj.id,
+            stateDecode: stateDecode
+        })
+            .done(function (data) {
+                var dataObj = JSON.parse(data);
+                var myData = "<div id=\"SearchEventDetail\">";
+                $.each(dataObj, function (key, e) {
+                    eventid = e.eventid;
+                    eventName = e.eventName;
+                    sponsor = e.sponsor;
+                    eventDate = e.eventDate;
+                    eventLocation = e.eventLocation;
+                    eventWeb = e.eventWeb;
+                    fbEventID = e.fbEventID;
+                    owner = e.owner;
+                    myData += "<div>";
+                    myData += "<span id=\"Event|" + eventid + "\" class=\"eventDetail\">" + eventName + "</span>";
+                    myData += "<span>" + sponsor + "</span>";
+                    myData += "<span>" + eventLocation + "</span>";
+                    myData += "<span>" + eventDate + "</span>";
+                    myData += "<span>";
+                    if (eventWeb !== "") {
+                        myData += "<a href=\"" + eventWeb + "\" target=\"_blank\">Web Site</a>";
+                    }
+                    myData += "</span>";
+                    myData += "<span>";
+                    if (fbEventID !== "") {
+                        myData += "<a href=\"" + fbEventID + "\" target=\"_blank\">FB Event Pg</a>";
+                    }
+                    myData += "</span > ";
+                    myData += "</div > ";
+
+                })
+                myData += "</div > ";
+                $("#searchEventData").html(myData);
+            })
+    }
+
+
+    jQuery(document.body).on("click", ".eventDetail", function () {
+        var thisID = $(this).attr("id");
+        var editObj = thisID.split("|");
+        var myURL = DCURL + "getSubmission" + editObj[0];
+
+        console.log("myURL: " + myURL);
+        console.log("editObj: " + editObj);
+
+        // editObj[0] is either "Artist" or "Event"
+        $.post(DCURL + "getSubmission" + editObj[0], {
+            fbID: fbObj.id,
+            miType: editObj[0],
+            miID: editObj[1]
+        })
+            .done(function (data) {
+                dataObj = JSON.parse(data);
+                var btnActivate = 0;
+                console.log("dataObj[0].owner: " + dataObj[0].owner);
+                if (fbObj.id === dataObj[0].owner) {
+                    btnActivate = 1;
+                } else {
+                    btnActivate = 0;
+                }
+
+                formPopulate(editObj[0], data, "#eventFormRegSubBtn", btnActivate);
+
+            })
+    })
+
+</script>

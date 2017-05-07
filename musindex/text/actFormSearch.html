@@ -1,0 +1,101 @@
+﻿<h1>Artist Search</h1>
+<div id="searchArtistMenu">
+    <div class="row">
+        <div class="col-md-6">
+            <span id="SearchArtistsWithinState" class="SearchBtn">Search My State</span>
+            </div>
+
+        <div class="col-md-6">
+            <span id="SearchArtistsAllStates" class="SearchBtn">Search All States</span>
+            </div>
+        </div>
+    </div>
+
+
+<div id="searchArtistData"></div>
+
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <input type="button" name="actFormSearchSubBtnCancel" class="subBtns cancelSub" value="Done" />
+    </div>
+
+</div>
+<script>
+    var stateDecode = "";
+    $("#SearchArtistsWithinState").click(function () {
+        runArtistSearch(fbObj.id, "");
+    })
+
+    $("#SearchArtistsAllStates").click(function () {
+        runArtistSearch("", "");
+    })
+
+    function runArtistSearch() {
+        $.post(DCURL + "SearchArtist", {
+            fbID: fbObj.id,
+            stateDecode: stateDecode
+        })
+            .done(function (data) {
+                var dataObj = JSON.parse(data);
+                var myData = "<div id=\"SearchArtistDetail\">";
+                $.each(dataObj, function (key, e) {
+                    actid = e.actid;
+                    actName = e.actName;
+                    style = e.style;
+                    actLocation = e.actLocation;
+                    actWeb = e.actWeb;
+                    bio = e.bio;
+                    fbPageID = e.fbPageID;
+                    fbPageIDPic = e.fbPageIDPic;
+                    owner = e.owner;
+                    myData += "<div>";
+                    myData += "<span id=\"Artist|" + actid + "\" class=\"artistDetail\">" + actName + "</span>";
+                    myData += "<span>" + actLocation + "</span>";
+                    myData += "<span>" + style + "</span>";
+                    myData += "<span>" + bio + "</span>";
+                    myData += "<span>";
+                    if (fbPageID !== "") {
+                        myData += "<a href=\"" + fbPageID + "\" target=\"_blank\"><img src=\"" + fbPageIDPic + "\" alt=\"\" /></a>";
+                    }
+                    myData += "</span>";
+                    myData += "</div>";
+
+                })
+                myData += "</div>";
+                $("#searchArtistData").html(myData);
+            })
+    }
+
+
+    jQuery(document.body).on("click", ".artistDetail", function () {
+        var thisID = $(this).attr("id");
+        var editObj = thisID.split("|");
+        var myURL = DCURL + "getSubmission" + editObj[0];
+
+        console.log("myURL: " + myURL);
+        console.log("editObj: " + editObj);
+
+        // editObj[0] is either "Artist" or "Event" 
+        $.post(DCURL + "getSubmission" + editObj[0], {
+            fbID: fbObj.id,
+            miType: editObj[0],
+            miID: editObj[1]
+        })
+            .done(function (data) {
+                dataObj = JSON.parse(data);
+                var btnActivate = 0;
+                console.log("dataObj[0].owner: " + dataObj[0].owner);
+                if (fbObj.id === dataObj[0].owner) {
+                    btnActivate = 1;
+                } else {
+                    btnActivate = 0;
+                }
+                // console.log("From DETAIL: " + data);
+                formPopulate(editObj[0], data, "#actFormRegSubBtn", btnActivate);
+                //gotoForm("#ActFormReg");
+            })
+    })
+</script>

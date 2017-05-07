@@ -1,0 +1,194 @@
+﻿<h1>Artist Registration</h1>
+<div class="row">
+    <div class="col-md-4">
+        <input name="actName"  placeholder="act or band name - required" required/>
+    </div>
+    <div class="col-md-4">
+        <div><input name="actContactName" placeholder="person to contact - required"  required/></div>
+        <div id="styleDropdown"><select name="style"></select></div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="sliderBlock">
+            <span class="slider0">Covers</span>
+            <span class="slider1">
+                <input id="coversRatio" type="range" min="0" max="100" step="10" class="slider2" />
+            </span>
+            <span id="coversRatioValue" class="slider3">0%</span>
+        </div>
+        <div class="sliderBlock">
+            <span style="width:30%;display:inline-block;">Year Formed</span>
+            <span class="slider1">
+                <input id="yearFormed" type="range" min="1997" max="2017" step="1" class="slider2" />
+            </span>
+            <span id="yearFormedValue" class="slider3">1997</span>
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <textarea name="bio" placeholder="bio - required" required></textarea>
+    </div>
+    <div class="col-md-6">
+        <textarea name="rider" placeholder="rider (conditions under which performance must take place)"></textarea>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div>
+            <span>Price $<input type="number" style="width: 20%;" name="price" value="0" /></span>
+            <span>Requires cartage <input type="checkbox" value="0" style="width: 10px;" name="requiresCartageCB" />
+                                   <input type="hidden" name="requiresCartage" value="0"/>
+            </span>
+            <div><span><input name="actCity" placeholder="city - required" style="width:75%;"/>, 
+                <span id="actStateSel" style="width:15%;"></span>
+                </span>
+            </div>
+            
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <input name="actWeb" type="url" placeholder="website" />
+        <input name="fbPageID" placeholder="Facebook page ID" />
+
+    </div>
+    <div class="col-md-4">
+        <input name="actEmail" type="email" placeholder="contact email - required"  required/>
+        <input name="actPhone" type="tel" placeholder="contact phone" />
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <input type="button" value="Include in searches? NO" id="actSearchableBtn" />
+        <input type="hidden" value="0" id="actSearchable" name="actSearchable"/>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <hr />
+        <div id="actFormRegErrMsg"></div>
+        </div>
+</div>
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <input type="button" id="actFormRegSubBtn" name="actFormRegSubBtn" class="subBtns" value="This is correct" />
+            </div>
+            <div class="col-md-6">
+                <input type="button" name="actFormRegSubBtnCancel" class="subBtns cancelSub" value="Cancel/Done" />
+            </div>
+        </div>
+        <input type="hidden" name="actID" />
+        <script>
+
+            $("#coversRatio").change(function () {
+                $('#coversRatioValue').html($("#coversRatio").val() + '%')
+            });
+            $("#yearFormed").change(function () {
+                $('#yearFormedValue').html($("#yearFormed").val())
+            });
+
+
+            $("input[name=requiresCartageCB]").change(function () {
+                var value = $(this).prop("checked") ? "1" : "0";
+                $("input[name=requiresCartage]").val(value);
+            });
+
+            isSearchable("#actSearchable",0);
+
+            $("#actSearchableBtn").click(function () {
+                isSearchable("#actSearchable",1);
+            })
+
+
+            $("input[name=actFormRegSubBtn]").click(function () {
+               // console.log("fbObj=" + fbObj.id);
+                var goodToGo = 0;
+                goodToGo += requiredVal("actName");
+                goodToGo += requiredVal("actContactName");
+                goodToGo += requiredVal("bio");
+                goodToGo += requiredVal("actCity");
+                goodToGo += requiredVal("actState");
+                goodToGo += requiredVal("actEmail");
+                goodToGo += checkemail("actEmail");
+
+                var actID = $("input[name=actID]").val();
+                var actName = $("input[name=actName]").val();
+                var actContactName = $("input[name=actContactName]").val();
+                var style = $('select[name=style] option:selected').val();
+
+                var coversRatio = $("#coversRatio").val();
+                var yearFormed = $("#yearFormed").val();
+                var bio = $("textarea[name=bio]").val();
+                var rider = $("textarea[name=rider]").val();
+                var price = $("input[name=price]").val();
+                var requiresCartage = $("input[name=requiresCartage]").val();
+                var actCity = $("input[name=actCity]").val();
+                var fbPageID = $("input[name=fbPageID]").val();
+                var actState = $('select[name=actState] option:selected').val();
+
+
+                var actWeb = $("input[name=actWeb]").val();
+                var actfbID = $("input[name=actfbID]").val();
+                var actEmail = $("input[name=actEmail]").val();
+                var actPhone = $("input[name=actPhone]").val();
+                var actSearchable = $("#actSearchable").val();
+                console.log("actSearchable: " + actSearchable);
+                $("#actFormRegErrMsg").html("");
+                if (goodToGo > 0) {
+                    errmsg = "The fields in <span style='background-color:" + errColor + "; padding: 0 2pt; '>red</span> are required.";
+                    $("#actFormRegErrMsg").html("Alert! " + errmsg);
+                }
+                else {
+
+                    $.post(DCURL + "RegisterAct", {
+                        fbID: fbObj.id,
+                        actName: actName,
+                        actContactName: actContactName,
+                        style: style,
+                        coversRatio: coversRatio,
+                        yearFormed: yearFormed,
+                        actWeb: actWeb,
+                        actEmail: actEmail,
+                        actPhone: actPhone,
+                        actCity: actCity,
+                        actState: actState,
+                        bio: bio,
+                        rider: rider,
+                        price: price,
+                        requiresCartage: requiresCartage,
+                        fbPageID: fbPageID,
+                        actSearchable: actSearchable,
+                        miID: actID
+                    })
+                .done(function (data) {
+                   // alert(data);
+                    $.post(DCURL + "SubmissionsListRefresh", {
+                        fbID: fbObj.id
+                    }).done(function (data) {
+                        $("#actFormRegErrMsg").html("Record for " + actName + " saved.");
+                        window.previousSubmissions++;
+                        previousSubmissionsAddBtn(window.previousSubmissions);
+                        submissionsObj = JSON.parse(data);
+                        submissionsList(submissionsObj);
+                    })
+                   })
+
+
+                };
+            });
+
+            loadDecode("actStyle", "#styleDropdown", "style","Musical/Artistic Style","");
+            loadDecode("stateShort", "#actStateSel", "actState","State","");
+        </script>
+
+
+

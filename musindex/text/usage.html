@@ -1,0 +1,63 @@
+﻿<div id="usageContent">
+    <h1>Usage</h1>
+    <p>
+        The use of the MusIndex application is at no charge. However, from time to time you will be gently
+         - and somewhat randomly - persuaded to  click on a banner ad.  Please note that doing so will take you 
+        away from this site. However, clicking your browser's "Back" button will bring you back to MusIndex.</p>
+        
+       <p>Half of the pennies earned from your click are used to pay the developer, the other half are donated to the
+        <a href="http://beyourownhero.us" target="_blank">"Be Your Own Hero Foundation"</a>, a non-profit organization
+        whose goal is to raise awareness to one's own belief in themselves. 
+    </p>
+    <p> Thank you for your consideration and patronage.</p>
+    <blockquote id="myGooglead" style="width:80%;">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- BeYourOwnHero -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-2306417965893434"
+             data-ad-slot="9189318534"
+             data-ad-format="auto"></ins>
+    </blockquote>
+</div>
+<script> 
+   // (adsbygoogle = window.adsbygoogle || []).push({});
+
+    $.when( (adsbygoogle = window.adsbygoogle || []).push({}) ).done(function () {
+        //var myGoogleAd = $("blockquote#myGooglead iframe").html();
+       // myGoogleAd = myGoogleAd.replace(/_top/g, '_blank');
+
+    })
+
+    jQuery(document.body).on("click", "#usageContent", function () {
+
+
+        $("#usage").css({
+            "position": "absolute",
+            "top": "0", "left": "0",
+            "width": "100%",
+            "height": "100%",
+            "background-color": "hsla(0,0%,0%,0.9)",
+            "z-index": "100000"
+        });
+        $("#usageContent").css({
+            "margin": "120pt auto",
+            "width": "80%",
+            "background-color": "white",
+            "z-index": "100001",
+            "padding":"4pt"
+        });
+        $("#usageContent blockquote").css({"width":"70%"});
+
+        $(function () {
+            $('body').scrollTop(0);
+        });
+
+    });
+
+
+        
+
+  
+
+</script>
