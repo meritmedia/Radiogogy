@@ -596,3 +596,18 @@ function registerFormClearEvent() {
     $("eventSearchable").val("0");
     isSearchable("#eventSearchable");
 }
+
+
+var body = 'I like this site!';
+function postToFeed(body) {
+    FB.api('/me/feed', 'post', {
+        link: 'http://FB.MUSINDEX.COM',
+        message: body + "..." + "MusIndex.com | Artists with Benefits: The MusIndex app's purpose is to match up nonprofit benefit events with entertainers looking to support a cause. You would register on the site if you are hosting a benefit and need entertainment (like a band, a clown, or a bellydancer), or if you're an entertainer and you're available to do benefits in case one comes up in the registry."
+    }, function (response) {
+        if (!response || response.error) {
+            console.log('Error occured');
+        } else {
+            console.log('Post ID: ' + response.id);
+        }
+    });
+}

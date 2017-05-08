@@ -146,6 +146,7 @@
     <Content Include="images\fb-musindexLogox200.jpg" />
     <Content Include="images\guitar.png" />
     <Content Include="images\logo.png" />
+    <Content Include="images\thumb-musindex.png" />
     <Content Include="images\twitter-logo-lg.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

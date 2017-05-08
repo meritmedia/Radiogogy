@@ -170,7 +170,10 @@
                         miID: actID
                     })
                 .done(function (data) {
-                   // alert(data);
+                    testObj = JSON.parse(data);
+                    if (testObj[0].new === "1") {
+                        postToFeed("Act \"" + actName + "\" just added to");
+                    }
                     $.post(DCURL + "SubmissionsListRefresh", {
                         fbID: fbObj.id
                     }).done(function (data) {
@@ -179,6 +182,7 @@
                         previousSubmissionsAddBtn(window.previousSubmissions);
                         submissionsObj = JSON.parse(data);
                         submissionsList(submissionsObj);
+                        //postToFeed("Act " + actName + " just added.");
                     })
                    })
 

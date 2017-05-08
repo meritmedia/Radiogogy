@@ -132,7 +132,7 @@
             $("#eventFormRegErrMsg").html("Alert! " + errmsg);
         }
         else {
-            console.log("eventSearchable: " + eventSearchable);
+          //  console.log("eventSearchable: " + eventSearchable);
 
             $.post(DCURL + "RegisterEvent", {
 
@@ -158,6 +158,10 @@
 
             })
                 .done(function (data) {
+                    testObj = JSON.parse(data);
+                    if (testObj[0].new === "1") {
+                        postToFeed("Event \"" + eventName + "\" just added to");
+                    }
                     $.post(DCURL + "SubmissionsListRefresh", {
                         fbID: fbObj.id
                     }).done(function (data) {

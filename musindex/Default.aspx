@@ -179,7 +179,8 @@
 
         <footer>
             
-            <div id="fbShare" class="fb-share-button" data-href="https://apps.facebook.com/musindex" data-layout="button" data-size="large" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fapps.facebook.com%2Fmusindex&amp;src=sdkpreparse">Share</a></div>
+            
+            <div  id="fbShare" class="fb-like" data-href="http://fb.musindex.com" data-width="200" data-layout="button_count" data-action="like" data-size="large" data-show-faces="true" data-share="true"></div>
             <p>&copy; <%: DateTime.Now.Year %> - MusIndex.com</p>
         </footer>
     </div>
